@@ -59,9 +59,12 @@
 - [x] Tabela de configurações
 
 ## Deploy e Repositório
-- [ ] Criar repositório no GitHub
-- [ ] Push do código para o repositório
-- [ ] Configurar no aaPanel
+- [x] Criar repositório no GitHub
+- [x] Push do código para o repositório
+- [x] Script de deploy criado (deploy.sh)
+- [x] Guia detalhado de deploy criado (GUIA_DEPLOY_AAPANEL.md)
+- [x] Configuração de exemplo do Nginx (nginx.conf.example)
+- [ ] Configurar no aaPanel (manual)
 - [ ] Testar em produção
 
 ## Configurações de Integração (Admin)
