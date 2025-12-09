@@ -15,6 +15,13 @@
       "when": 1765288718401,
       "tag": "0001_vengeful_celestials",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1765298412713,
+      "tag": "0002_lame_william_stryker",
+      "breakpoints": true
     }
   ]
 }

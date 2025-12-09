@@ -1,6 +1,16 @@
 import { eq, and, desc, asc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, loanFactors, InsertLoanFactor, LoanFactor, proposals, InsertProposal, Proposal, settings, InsertSetting } from "../drizzle/schema";
+import { InsertUser, users, loanFactors, InsertLoanFactor, LoanFactor, proposals, InsertProposal, Proposal, settings, InsertSetting, adminUsers, AdminUser, InsertAdminUser } from "../drizzle/schema";
+import { createHash } from "crypto";
+
+// Simple password hashing (for production, use bcrypt)
+function hashPassword(password: string): string {
+  return createHash("sha256").update(password + "don-santos-salt-2024").digest("hex");
+}
+
+export function verifyPassword(password: string, hash: string): boolean {
+  return hashPassword(password) === hash;
+}
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -259,3 +269,59 @@ export async function getAllSettings(): Promise<{ key: string; value: string; de
   
   return result;
 }
+
+
+// ============ ADMIN USERS FUNCTIONS ============
+
+export async function createAdminUser(email: string, password: string, name?: string): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const passwordHash = hashPassword(password);
+  const result = await db.insert(adminUsers).values({
+    email,
+    passwordHash,
+    name,
+  });
+  
+  return result[0].insertId;
+}
+
+export async function getAdminUserByEmail(email: string): Promise<AdminUser | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(adminUsers).where(eq(adminUsers.email, email)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function validateAdminLogin(email: string, password: string): Promise<AdminUser | null> {
+  const admin = await getAdminUserByEmail(email);
+  if (!admin || !admin.isActive) return null;
+  
+  if (!verifyPassword(password, admin.passwordHash)) return null;
+  
+  // Update last signed in
+  const db = await getDb();
+  if (db) {
+    await db.update(adminUsers).set({ lastSignedIn: new Date() }).where(eq(adminUsers.id, admin.id));
+  }
+  
+  return admin;
+}
+
+export async function ensureMasterAdminExists(): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  const masterEmail = "elislecio@gmail.com";
+  const existing = await getAdminUserByEmail(masterEmail);
+  
+  if (!existing) {
+    await createAdminUser(masterEmail, "rosy87", "Administrador Master");
+    console.log("[Admin] Master admin user created: " + masterEmail);
+  }
+}
+
+// Call this on startup
+ensureMasterAdminExists().catch(console.error);

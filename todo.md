@@ -74,3 +74,9 @@
 - [x] Formulário para credenciais S3 customizado
 - [x] Teste de conexão antes de salvar
 - [x] Configurações gerais da empresa (telefone, WhatsApp, e-mail)
+
+## Sistema de Login Admin
+- [x] Criar sistema de login com usuário e senha
+- [x] Usuário master: elislecio@gmail.com
+- [x] Página de login admin
+- [x] Proteção das rotas administrativas
