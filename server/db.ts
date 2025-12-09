@@ -1,11 +1,10 @@
-import { eq } from "drizzle-orm";
+import { eq, and, desc, asc } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, loanFactors, InsertLoanFactor, LoanFactor, proposals, InsertProposal, Proposal, settings, InsertSetting } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
@@ -17,6 +16,8 @@ export async function getDb() {
   }
   return _db;
 }
+
+// ============ USER FUNCTIONS ============
 
 export async function upsertUser(user: InsertUser): Promise<void> {
   if (!user.openId) {
@@ -89,4 +90,172 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// ============ LOAN FACTORS FUNCTIONS ============
+
+export async function getAllLoanFactors(): Promise<LoanFactor[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(loanFactors).orderBy(asc(loanFactors.prazo), asc(loanFactors.dia));
+}
+
+export async function getLoanFactorByPrazoAndDia(prazo: number, dia: number): Promise<LoanFactor | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select()
+    .from(loanFactors)
+    .where(and(eq(loanFactors.prazo, prazo), eq(loanFactors.dia, dia)))
+    .limit(1);
+  
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getAvailablePrazos(): Promise<number[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.selectDistinct({ prazo: loanFactors.prazo })
+    .from(loanFactors)
+    .orderBy(asc(loanFactors.prazo));
+  
+  return result.map(r => r.prazo);
+}
+
+export async function upsertLoanFactor(factor: InsertLoanFactor): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(loanFactors).values(factor).onDuplicateKeyUpdate({
+    set: {
+      fator: factor.fator,
+      updatedAt: new Date(),
+    },
+  });
+}
+
+export async function bulkInsertLoanFactors(factors: InsertLoanFactor[]): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Delete all existing factors first
+  await db.delete(loanFactors);
+  
+  // Insert new factors in batches
+  const batchSize = 100;
+  for (let i = 0; i < factors.length; i += batchSize) {
+    const batch = factors.slice(i, i + batchSize);
+    await db.insert(loanFactors).values(batch);
+  }
+}
+
+export async function deleteLoanFactor(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.delete(loanFactors).where(eq(loanFactors.id, id));
+}
+
+// ============ PROPOSALS FUNCTIONS ============
+
+export async function createProposal(proposal: InsertProposal): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(proposals).values(proposal);
+  return result[0].insertId;
+}
+
+export async function getAllProposals(): Promise<Proposal[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return await db.select().from(proposals).orderBy(desc(proposals.createdAt));
+}
+
+export async function getProposalById(id: number): Promise<Proposal | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(proposals).where(eq(proposals.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function updateProposalStatus(id: number, status: "pendente" | "em_analise" | "aprovado" | "recusado", observacoes?: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const updateData: Record<string, unknown> = { status };
+  if (observacoes !== undefined) {
+    updateData.observacoes = observacoes;
+  }
+  
+  await db.update(proposals).set(updateData).where(eq(proposals.id, id));
+}
+
+export async function updateProposalDocuments(id: number, documents: {
+  rgFrenteUrl?: string;
+  rgVersoUrl?: string;
+  comprovanteResidenciaUrl?: string;
+  selfieUrl?: string;
+  googleDriveFolderId?: string;
+  googleDriveFolderUrl?: string;
+}): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.update(proposals).set(documents).where(eq(proposals.id, id));
+}
+
+export async function getProposalStats(): Promise<{
+  total: number;
+  pendentes: number;
+  emAnalise: number;
+  aprovados: number;
+  recusados: number;
+}> {
+  const db = await getDb();
+  if (!db) return { total: 0, pendentes: 0, emAnalise: 0, aprovados: 0, recusados: 0 };
+  
+  const all = await db.select().from(proposals);
+  
+  return {
+    total: all.length,
+    pendentes: all.filter(p => p.status === "pendente").length,
+    emAnalise: all.filter(p => p.status === "em_analise").length,
+    aprovados: all.filter(p => p.status === "aprovado").length,
+    recusados: all.filter(p => p.status === "recusado").length,
+  };
+}
+
+// ============ SETTINGS FUNCTIONS ============
+
+export async function getSetting(key: string): Promise<string | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
+  return result.length > 0 ? result[0].value : undefined;
+}
+
+export async function setSetting(key: string, value: string, description?: string): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  await db.insert(settings).values({ key, value, description }).onDuplicateKeyUpdate({
+    set: { value, description, updatedAt: new Date() },
+  });
+}
+
+export async function getAllSettings(): Promise<{ key: string; value: string; description: string | null }[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.select({
+    key: settings.key,
+    value: settings.value,
+    description: settings.description,
+  }).from(settings);
+  
+  return result;
+}
