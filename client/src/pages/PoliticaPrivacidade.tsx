@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Shield, Lock, Eye, FileText, Users, Mail, Phone } from "lucide-react";
+import { Brand } from "@/components/Brand";
 
 export default function PoliticaPrivacidade() {
   return (
@@ -9,15 +10,7 @@ export default function PoliticaPrivacidade() {
       <header className="bg-primary text-primary-foreground py-4 sticky top-0 z-50 shadow-lg">
         <div className="container">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
-                <span className="text-accent-foreground font-bold">DS</span>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-bold">Don Santos</h1>
-                <p className="text-xs text-primary-foreground/80">Correspondente Bancário</p>
-              </div>
-            </Link>
+            <Brand variant="light" />
             <Link href="/">
               <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -51,7 +44,7 @@ export default function PoliticaPrivacidade() {
             {/* Introdução */}
             <section className="mb-12">
               <p className="text-lg text-muted-foreground leading-relaxed">
-                A <strong>DS CORRESPONDENTE BANCARIOS LTDA</strong> ("Don Santos", "nós", "nosso" ou "nossa"), inscrita no CNPJ sob o nº XX.XXX.XXX/0001-XX, com sede em Paulo Afonso - BA, está comprometida em proteger a privacidade e os dados pessoais de nossos clientes, parceiros e visitantes do nosso site.
+                A <strong>DS PROMOTORA DE VENDAS LTDA</strong> ("DS PROMOTORA", "nós", "nosso" ou "nossa"), inscrita no CNPJ sob o nº 54.419.054/0001-15, com sede em Paulo Afonso - BA, está comprometida em proteger a privacidade e os dados pessoais de nossos clientes, parceiros e visitantes do nosso site.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Esta Política de Privacidade descreve como coletamos, usamos, armazenamos e protegemos suas informações pessoais, em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018) e demais legislações aplicáveis.
@@ -239,7 +232,7 @@ export default function PoliticaPrivacidade() {
               <div className="bg-background p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-primary" />
-                  <span className="text-foreground">privacidade@donsantosba.com.br</span>
+                  <span className="text-foreground">donsantosba@donsantosba.com.br</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-primary" />
@@ -269,7 +262,7 @@ export default function PoliticaPrivacidade() {
       <footer className="bg-primary text-primary-foreground py-8">
         <div className="container text-center">
           <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Don Santos Correspondente Bancário. Todos os direitos reservados.
+            © {new Date().getFullYear()} DS PROMOTORA Correspondente Bancário. Todos os direitos reservados.
           </p>
           <div className="flex justify-center gap-6 mt-4 text-sm">
             <Link href="/politica-privacidade" className="text-accent hover:underline">

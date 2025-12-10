@@ -22,6 +22,7 @@ import AdminPropostas from "./pages/admin/Propostas";
 import AdminFatores from "./pages/admin/Fatores";
 import AdminExportar from "./pages/admin/Exportar";
 import AdminConfiguracoes from "./pages/admin/Configuracoes";
+import AdminLogin from "./pages/admin/Login";
 
 function Router() {
   return (
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/cadastro" component={Cadastro} />
 
       {/* Admin routes */}
+      <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin">
         <AdminLayout>
           <AdminDashboard />

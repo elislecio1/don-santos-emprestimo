@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Brand } from "@/components/Brand";
 import {
   ArrowLeft,
   Phone,
@@ -56,15 +57,7 @@ export default function SejaParceiro() {
       <header className="bg-primary text-primary-foreground py-4 sticky top-0 z-50 shadow-lg">
         <div className="container">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
-                <span className="text-accent-foreground font-bold">DS</span>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-bold">Don Santos</h1>
-                <p className="text-xs text-primary-foreground/80">Correspondente Bancário</p>
-              </div>
-            </Link>
+            <Brand variant="light" />
             <div className="flex items-center gap-4">
               <a href="tel:08008802525" className="hidden md:flex items-center gap-2 hover:text-accent transition-colors">
                 <Phone className="w-5 h-5" />
@@ -100,7 +93,7 @@ export default function SejaParceiro() {
                 Seja um <span className="text-gold">Parceiro</span>
               </h1>
               <p className="text-xl text-white/80 mb-8">
-                Torne-se um subestabelecido Don Santos e faça parte de uma rede de sucesso no mercado de crédito consignado.
+                Torne-se um subestabelecido DS PROMOTORA e faça parte de uma rede de sucesso no mercado de crédito consignado.
               </p>
               <div className="flex flex-wrap gap-4">
                 <div className="flex items-center gap-2">
@@ -224,7 +217,7 @@ export default function SejaParceiro() {
                 step: "04",
                 icon: TrendingUp,
                 title: "Comece a Vender",
-                description: "Inicie suas operações e comece a faturar com a Don Santos.",
+                description: "Inicie suas operações e comece a faturar com a DS PROMOTORA.",
               },
             ].map((item, index) => (
               <div key={index} className="relative">
@@ -258,7 +251,7 @@ export default function SejaParceiro() {
                 Cadastre-se como Parceiro
               </h2>
               <p className="text-muted-foreground mb-8">
-                Preencha o formulário abaixo para iniciar sua jornada como parceiro Don Santos. Nossa equipe entrará em contato para dar continuidade ao processo.
+                Preencha o formulário abaixo para iniciar sua jornada como parceiro DS PROMOTORA. Nossa equipe entrará em contato para dar continuidade ao processo.
               </p>
 
               <div className="space-y-6">
@@ -432,7 +425,7 @@ export default function SejaParceiro() {
       <footer className="bg-primary text-primary-foreground py-8">
         <div className="container text-center">
           <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Don Santos Correspondente Bancário. Todos os direitos reservados.
+            © {new Date().getFullYear()} DS PROMOTORA Correspondente Bancário. Todos os direitos reservados.
           </p>
           <div className="flex justify-center gap-6 mt-4 text-sm">
             <Link href="/politica-privacidade" className="text-primary-foreground/60 hover:text-accent transition-colors">

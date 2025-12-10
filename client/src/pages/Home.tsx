@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Link } from "wouter";
+import { Brand } from "@/components/Brand";
 import {
   Phone,
   MapPin,
@@ -24,16 +25,7 @@ export default function Home() {
       <header className="bg-primary text-primary-foreground sticky top-0 z-50 shadow-lg">
         <div className="container">
           <div className="flex items-center justify-between py-3">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center">
-                <span className="text-accent-foreground font-bold text-xl">DS</span>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-bold leading-tight">Don Santos</h1>
-                <p className="text-xs text-primary-foreground/80">Correspondente Bancário</p>
-              </div>
-            </Link>
+            <Brand size="lg" variant="light" />
 
             {/* Contact Info */}
             <div className="hidden md:flex items-center gap-6">
@@ -103,7 +95,7 @@ export default function Home() {
                 <span className="text-gold">Empréstimo Consignado</span>
               </h2>
               <p className="text-lg text-white/80 mb-8 max-w-lg">
-                A Don Santos Correspondente Bancário oferece as melhores condições do mercado para você realizar seus sonhos. Simule agora e descubra quanto você pode contratar.
+                A DS PROMOTORA Correspondente Bancário oferece as melhores condições do mercado para você realizar seus sonhos. Simule agora e descubra quanto você pode contratar.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/simulador">
@@ -127,7 +119,7 @@ export default function Home() {
                 <div className="absolute -inset-4 bg-accent/20 rounded-3xl blur-2xl"></div>
                 <Card className="relative bg-white/10 backdrop-blur-sm border-white/20">
                   <CardContent className="p-8">
-                    <h3 className="text-2xl font-bold mb-6 text-white">Por que escolher a Don Santos?</h3>
+                    <h3 className="text-2xl font-bold mb-6 text-white">Por que escolher a DS PROMOTORA?</h3>
                     <ul className="space-y-4">
                       {[
                         "Atendimento personalizado",
@@ -269,10 +261,10 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Sobre a <span className="text-gold">Don Santos</span>
+                Sobre a <span className="text-gold">DS PROMOTORA</span>
               </h2>
               <p className="text-primary-foreground/80 mb-6">
-                Com mais de 13 anos de experiência no mercado, a Don Santos Correspondente Bancário se consolidou como referência em operações de empréstimos consignados no Nordeste brasileiro.
+                Com mais de 13 anos de experiência no mercado, a DS PROMOTORA Correspondente Bancário se consolidou como referência em operações de empréstimos consignados no Nordeste brasileiro.
               </p>
               <p className="text-primary-foreground/80 mb-8">
                 Nossa equipe possui conhecimento e capacidade para estar sempre disposta a atender as necessidades de nossos clientes e parceiros, trazendo a experiência e a exigência de quem busca ser a primeira em excelência.
@@ -338,12 +330,12 @@ export default function Home() {
                   <span className="text-accent-foreground font-bold text-xl">DS</span>
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold">Don Santos</h3>
+                  <h3 className="text-lg font-bold">DS PROMOTORA</h3>
                   <p className="text-xs text-primary-foreground/70">Correspondente Bancário</p>
                 </div>
               </div>
               <p className="text-primary-foreground/70 text-sm mb-4">
-                DS CORRESPONDENTE BANCARIOS LTDA - Especialistas em empréstimo consignado com mais de 13 anos de experiência no mercado.
+                DS PROMOTORA DE VENDAS LTDA - CNPJ: 54.419.054/0001-15 - Especialistas em empréstimo consignado com mais de 13 anos de experiência no mercado.
               </p>
             </div>
 
@@ -384,11 +376,11 @@ export default function Home() {
                 </li>
                 <li className="flex items-center gap-2 text-primary-foreground/70">
                   <Mail className="w-4 h-4 text-accent" />
-                  <a href="mailto:contato@donsantosba.com.br" className="hover:text-accent transition-colors">contato@donsantosba.com.br</a>
+                  <a href="mailto:donsantosba@donsantosba.com.br" className="hover:text-accent transition-colors">donsantosba@donsantosba.com.br</a>
                 </li>
                 <li className="flex items-start gap-2 text-primary-foreground/70">
                   <MapPin className="w-4 h-4 text-accent mt-0.5" />
-                  <span>Paulo Afonso - BA / Delmiro Gouveia - AL</span>
+                  <span>Av. Otaviano Leandro de Moraes, 31, Centro, Paulo Afonso - BA, CEP 48.602-005</span>
                 </li>
               </ul>
             </div>
@@ -397,7 +389,7 @@ export default function Home() {
           <div className="border-t border-primary-foreground/20 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className="text-sm text-primary-foreground/60">
-                © {new Date().getFullYear()} Don Santos Correspondente Bancário. Todos os direitos reservados.
+                © {new Date().getFullYear()} DS PROMOTORA Correspondente Bancário. Todos os direitos reservados.
               </p>
               <div className="flex gap-6 text-sm">
                 <Link href="/politica-privacidade" className="text-primary-foreground/60 hover:text-accent transition-colors">

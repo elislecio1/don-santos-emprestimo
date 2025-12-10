@@ -19,6 +19,8 @@ import {
   getSetting,
   setSetting,
   getAllSettings,
+  validateAdminLogin,
+  getAdminUserByEmail,
 } from "./db";
 import { storagePut } from "./storage";
 import { nanoid } from "nanoid";
@@ -29,13 +31,51 @@ import {
   getStorageStatus,
 } from "./services/storageService";
 import { testGoogleDriveConnection } from "./services/googleDrive";
+import { SignJWT, jwtVerify } from "jose";
 
-// Admin procedure - only allows admin users
-const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
-  if (ctx.user.role !== "admin") {
-    throw new TRPCError({ code: "FORBIDDEN", message: "Acesso negado. Apenas administradores." });
+const ADMIN_COOKIE_NAME = "don_santos_admin_session";
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "don-santos-secret-key-2024");
+
+// Create admin JWT token
+async function createAdminToken(adminId: number, email: string): Promise<string> {
+  return await new SignJWT({ adminId, email })
+    .setProtectedHeader({ alg: "HS256" })
+    .setExpirationTime("7d")
+    .sign(JWT_SECRET);
+}
+
+// Verify admin JWT token
+async function verifyAdminToken(token: string): Promise<{ adminId: number; email: string } | null> {
+  try {
+    const { payload } = await jwtVerify(token, JWT_SECRET);
+    return { adminId: payload.adminId as number, email: payload.email as string };
+  } catch {
+    return null;
   }
-  return next({ ctx });
+}
+
+// Admin procedure - checks for admin session cookie
+const adminProcedure = publicProcedure.use(async ({ ctx, next }) => {
+  const cookies = ctx.req.headers.cookie || "";
+  const adminCookie = cookies.split(";").find(c => c.trim().startsWith(ADMIN_COOKIE_NAME + "="));
+  
+  if (!adminCookie) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Sessão expirada. Faça login novamente." });
+  }
+  
+  const token = adminCookie.split("=")[1];
+  const adminData = await verifyAdminToken(token);
+  
+  if (!adminData) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Sessão inválida. Faça login novamente." });
+  }
+  
+  const admin = await getAdminUserByEmail(adminData.email);
+  if (!admin || !admin.isActive) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Usuário não encontrado ou inativo." });
+  }
+  
+  return next({ ctx: { ...ctx, admin } });
 });
 
 export const appRouter = router({
@@ -47,6 +87,82 @@ export const appRouter = router({
       const cookieOptions = getSessionCookieOptions(ctx.req);
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return { success: true } as const;
+    }),
+  }),
+
+  // ============ ADMIN AUTH ============
+  adminAuth: router({
+    // Login with email and password
+    login: publicProcedure
+      .input(z.object({
+        email: z.string().email(),
+        password: z.string().min(1),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        const admin = await validateAdminLogin(input.email, input.password);
+        
+        if (!admin) {
+          throw new TRPCError({ code: "UNAUTHORIZED", message: "Email ou senha inválidos." });
+        }
+        
+        const token = await createAdminToken(admin.id, admin.email);
+        
+        // Set cookie
+        ctx.res.cookie(ADMIN_COOKIE_NAME, token, {
+          httpOnly: true,
+          secure: ctx.req.protocol === "https",
+          sameSite: "lax",
+          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          path: "/",
+        });
+        
+        return {
+          success: true,
+          admin: {
+            id: admin.id,
+            email: admin.email,
+            name: admin.name,
+          },
+        };
+      }),
+
+    // Check if logged in
+    me: publicProcedure.query(async ({ ctx }) => {
+      const cookies = ctx.req.headers.cookie || "";
+      const adminCookie = cookies.split(";").find(c => c.trim().startsWith(ADMIN_COOKIE_NAME + "="));
+      
+      if (!adminCookie) {
+        return null;
+      }
+      
+      const token = adminCookie.split("=")[1];
+      const adminData = await verifyAdminToken(token);
+      
+      if (!adminData) {
+        return null;
+      }
+      
+      const admin = await getAdminUserByEmail(adminData.email);
+      if (!admin || !admin.isActive) {
+        return null;
+      }
+      
+      return {
+        id: admin.id,
+        email: admin.email,
+        name: admin.name,
+      };
+    }),
+
+    // Logout
+    logout: publicProcedure.mutation(({ ctx }) => {
+      ctx.res.clearCookie(ADMIN_COOKIE_NAME, {
+        httpOnly: true,
+        secure: ctx.req.protocol === "https",
+        sameSite: "lax",
+        path: "/",
+      });
+      return { success: true };
     }),
   }),
 

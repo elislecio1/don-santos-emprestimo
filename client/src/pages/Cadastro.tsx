@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Brand } from "@/components/Brand";
 import { useState, useEffect, useRef } from "react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
@@ -412,15 +413,7 @@ export default function Cadastro() {
       <header className="bg-primary text-primary-foreground py-4 sticky top-0 z-50 shadow-lg">
         <div className="container">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
-                <span className="text-accent-foreground font-bold">DS</span>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-bold">Don Santos</h1>
-                <p className="text-xs text-primary-foreground/80">Correspondente Bancário</p>
-              </div>
-            </Link>
+            <Brand variant="light" />
             <a href="tel:08008802525" className="flex items-center gap-2 hover:text-accent transition-colors">
               <Phone className="w-5 h-5" />
               <span className="font-semibold hidden sm:inline">0800 880 2525</span>
@@ -932,7 +925,7 @@ export default function Cadastro() {
       <footer className="bg-primary text-primary-foreground py-8 mt-8">
         <div className="container text-center">
           <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Don Santos Correspondente Bancário. Todos os direitos reservados.
+            © {new Date().getFullYear()} DS PROMOTORA Correspondente Bancário. Todos os direitos reservados.
           </p>
         </div>
       </footer>

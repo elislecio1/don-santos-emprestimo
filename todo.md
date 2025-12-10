@@ -59,9 +59,12 @@
 - [x] Tabela de configurações
 
 ## Deploy e Repositório
-- [ ] Criar repositório no GitHub
-- [ ] Push do código para o repositório
-- [ ] Configurar no aaPanel
+- [x] Criar repositório no GitHub
+- [x] Push do código para o repositório
+- [x] Script de deploy criado (deploy.sh)
+- [x] Guia detalhado de deploy criado (GUIA_DEPLOY_AAPANEL.md)
+- [x] Configuração de exemplo do Nginx (nginx.conf.example)
+- [ ] Configurar no aaPanel (manual)
 - [ ] Testar em produção
 
 ## Configurações de Integração (Admin)
@@ -71,3 +74,14 @@
 - [x] Formulário para credenciais S3 customizado
 - [x] Teste de conexão antes de salvar
 - [x] Configurações gerais da empresa (telefone, WhatsApp, e-mail)
+
+## Sistema de Login Admin
+- [x] Criar sistema de login com usuário e senha
+- [x] Usuário master: elislecio@gmail.com
+- [x] Página de login admin
+- [x] Proteção das rotas administrativas
+
+
+## Dados Iniciais
+- [x] Processar planilha de fatores INSS
+- [x] Cadastrar fatores no banco de dados (217 registros)

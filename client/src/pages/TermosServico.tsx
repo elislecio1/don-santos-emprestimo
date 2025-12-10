@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, FileText, Scale, AlertTriangle, CheckCircle, Users, Mail, Phone } from "lucide-react";
+import { Brand } from "@/components/Brand";
 
 export default function TermosServico() {
   return (
@@ -9,15 +10,7 @@ export default function TermosServico() {
       <header className="bg-primary text-primary-foreground py-4 sticky top-0 z-50 shadow-lg">
         <div className="container">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
-                <span className="text-accent-foreground font-bold">DS</span>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-bold">Don Santos</h1>
-                <p className="text-xs text-primary-foreground/80">Correspondente Bancário</p>
-              </div>
-            </Link>
+            <Brand variant="light" />
             <Link href="/">
               <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -51,7 +44,7 @@ export default function TermosServico() {
             {/* Introdução */}
             <section className="mb-12">
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Bem-vindo aos Termos de Serviço da <strong>DS CORRESPONDENTE BANCARIOS LTDA</strong> ("Don Santos", "nós", "nosso" ou "nossa"). Ao acessar ou utilizar nosso site e serviços, você concorda em cumprir e estar vinculado a estes Termos de Serviço.
+                Bem-vindo aos Termos de Serviço da <strong>DS PROMOTORA DE VENDAS LTDA</strong> ("DS PROMOTORA", "nós", "nosso" ou "nossa"), inscrita no CNPJ sob o nº 54.419.054/0001-15. Ao acessar ou utilizar nosso site e serviços, você concorda em cumprir e estar vinculado a estes Termos de Serviço.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Por favor, leia atentamente estes termos antes de utilizar nossos serviços. Se você não concordar com qualquer parte destes termos, não deverá utilizar nosso site ou serviços.
@@ -68,7 +61,7 @@ export default function TermosServico() {
               </div>
               <ul className="list-disc list-inside text-muted-foreground space-y-2">
                 <li><strong>"Site":</strong> O website www.donsantosba.com.br e todas as suas páginas e funcionalidades</li>
-                <li><strong>"Serviços":</strong> Todos os serviços oferecidos pela Don Santos, incluindo simulação de empréstimo, intermediação de crédito consignado e serviços correlatos</li>
+                <li><strong>"Serviços":</strong> Todos os serviços oferecidos pela DS PROMOTORA, incluindo simulação de empréstimo, intermediação de crédito consignado e serviços correlatos</li>
                 <li><strong>"Usuário":</strong> Qualquer pessoa que acesse ou utilize o Site e/ou os Serviços</li>
                 <li><strong>"Proposta":</strong> Solicitação de empréstimo submetida pelo Usuário através do Site</li>
                 <li><strong>"Instituição Financeira":</strong> Bancos e instituições financeiras parceiras que concedem o crédito</li>
@@ -84,7 +77,7 @@ export default function TermosServico() {
                 <h2 className="text-2xl font-bold text-foreground m-0">2. Descrição dos Serviços</h2>
               </div>
               <p className="text-muted-foreground mb-4">
-                A Don Santos atua como <strong>correspondente bancário</strong>, intermediando operações de crédito entre os Usuários e as Instituições Financeiras parceiras. Nossos serviços incluem:
+                A DS PROMOTORA atua como <strong>correspondente bancário</strong>, intermediando operações de crédito entre os Usuários e as Instituições Financeiras parceiras. Nossos serviços incluem:
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2">
                 <li>Simulação de empréstimo consignado</li>
@@ -94,7 +87,7 @@ export default function TermosServico() {
               </ul>
               <div className="mt-4 p-4 bg-accent/10 rounded-lg border border-accent/20">
                 <p className="text-sm text-foreground">
-                  <strong>Importante:</strong> A Don Santos não é uma instituição financeira e não concede crédito diretamente. A aprovação do crédito está sujeita à análise e decisão exclusiva das Instituições Financeiras parceiras.
+                  <strong>Importante:</strong> A DS PROMOTORA não é uma instituição financeira e não concede crédito diretamente. A aprovação do crédito está sujeita à análise e decisão exclusiva das Instituições Financeiras parceiras.
                 </p>
               </div>
             </section>
@@ -136,7 +129,7 @@ export default function TermosServico() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-foreground">4.2 Envio de Proposta</h4>
-                  <p>Ao enviar uma proposta, o Usuário autoriza a Don Santos a encaminhar seus dados às Instituições Financeiras parceiras para análise de crédito.</p>
+                  <p>Ao enviar uma proposta, o Usuário autoriza a DS PROMOTORA a encaminhar seus dados às Instituições Financeiras parceiras para análise de crédito.</p>
                 </div>
                 <div>
                   <h4 className="font-semibold text-foreground">4.3 Análise e Aprovação</h4>
@@ -179,7 +172,7 @@ export default function TermosServico() {
                 <h2 className="text-2xl font-bold text-foreground m-0">6. Limitação de Responsabilidade</h2>
               </div>
               <p className="text-muted-foreground mb-4">
-                A Don Santos não se responsabiliza por:
+                A DS PROMOTORA não se responsabiliza por:
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2">
                 <li>Decisões de crédito tomadas pelas Instituições Financeiras</li>
@@ -200,7 +193,7 @@ export default function TermosServico() {
                 <h2 className="text-2xl font-bold text-foreground m-0">7. Propriedade Intelectual</h2>
               </div>
               <p className="text-muted-foreground">
-                Todo o conteúdo do Site, incluindo textos, imagens, logotipos, marcas, layout e software, é de propriedade da Don Santos ou de seus licenciadores e está protegido pelas leis de propriedade intelectual. É proibida a reprodução, distribuição ou modificação de qualquer conteúdo sem autorização prévia e expressa.
+                Todo o conteúdo do Site, incluindo textos, imagens, logotipos, marcas, layout e software, é de propriedade da DS PROMOTORA ou de seus licenciadores e está protegido pelas leis de propriedade intelectual. É proibida a reprodução, distribuição ou modificação de qualquer conteúdo sem autorização prévia e expressa.
               </p>
             </section>
 
@@ -213,7 +206,7 @@ export default function TermosServico() {
                 <h2 className="text-2xl font-bold text-foreground m-0">8. Comunicações via WhatsApp</h2>
               </div>
               <p className="text-muted-foreground mb-4">
-                Ao fornecer seu número de telefone, o Usuário autoriza a Don Santos a:
+                Ao fornecer seu número de telefone, o Usuário autoriza a DS PROMOTORA a:
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2">
                 <li>Enviar mensagens via WhatsApp relacionadas à sua proposta de empréstimo</li>
@@ -235,7 +228,7 @@ export default function TermosServico() {
                 <h2 className="text-2xl font-bold text-foreground m-0">9. Alterações nos Termos</h2>
               </div>
               <p className="text-muted-foreground">
-                A Don Santos reserva-se o direito de modificar estes Termos de Serviço a qualquer momento. As alterações entrarão em vigor imediatamente após sua publicação no Site. O uso continuado dos Serviços após a publicação de alterações constitui aceitação dos novos termos.
+                A DS PROMOTORA reserva-se o direito de modificar estes Termos de Serviço a qualquer momento. As alterações entrarão em vigor imediatamente após sua publicação no Site. O uso continuado dos Serviços após a publicação de alterações constitui aceitação dos novos termos.
               </p>
             </section>
 
@@ -266,7 +259,7 @@ export default function TermosServico() {
               <div className="bg-background p-4 rounded-lg space-y-3">
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-primary" />
-                  <span className="text-foreground">contato@donsantosba.com.br</span>
+                  <span className="text-foreground">donsantosba@donsantosba.com.br</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-primary" />
@@ -283,7 +276,7 @@ export default function TermosServico() {
       <footer className="bg-primary text-primary-foreground py-8">
         <div className="container text-center">
           <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Don Santos Correspondente Bancário. Todos os direitos reservados.
+            © {new Date().getFullYear()} DS PROMOTORA Correspondente Bancário. Todos os direitos reservados.
           </p>
           <div className="flex justify-center gap-6 mt-4 text-sm">
             <Link href="/politica-privacidade" className="text-primary-foreground/60 hover:text-accent transition-colors">

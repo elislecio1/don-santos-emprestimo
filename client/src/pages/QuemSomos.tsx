@@ -17,6 +17,7 @@ import {
   Calculator,
   ChevronRight,
 } from "lucide-react";
+import { Brand } from "@/components/Brand";
 
 export default function QuemSomos() {
   return (
@@ -25,15 +26,7 @@ export default function QuemSomos() {
       <header className="bg-primary text-primary-foreground py-4 sticky top-0 z-50 shadow-lg">
         <div className="container">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
-                <span className="text-accent-foreground font-bold">DS</span>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-bold">Don Santos</h1>
-                <p className="text-xs text-primary-foreground/80">Correspondente Bancário</p>
-              </div>
-            </Link>
+            <Brand variant="light" />
             <div className="flex items-center gap-4">
               <a href="tel:08008802525" className="hidden md:flex items-center gap-2 hover:text-accent transition-colors">
                 <Phone className="w-5 h-5" />
@@ -64,7 +57,7 @@ export default function QuemSomos() {
             Quem <span className="text-gold">Somos</span>
           </h1>
           <p className="text-xl text-white/80 max-w-2xl">
-            Conheça a história e os valores da Don Santos Correspondente Bancário
+            Conheça a história e os valores da DS PROMOTORA Correspondente Bancário
           </p>
         </div>
       </section>
@@ -81,7 +74,7 @@ export default function QuemSomos() {
                 Mais de 13 anos transformando vidas
               </h2>
               <p className="text-muted-foreground mb-4">
-                A <strong>DS CORRESPONDENTE BANCARIOS LTDA</strong>, conhecida como Don Santos, nasceu com o propósito de facilitar o acesso ao crédito para aposentados, pensionistas e servidores públicos no Nordeste brasileiro.
+                A <strong>DS PROMOTORA DE VENDAS LTDA</strong>, conhecida como DS PROMOTORA, inscrita no CNPJ sob o nº 54.419.054/0001-15, nasceu com o propósito de facilitar o acesso ao crédito para aposentados, pensionistas e servidores públicos no Nordeste brasileiro.
               </p>
               <p className="text-muted-foreground mb-4">
                 Com mais de 13 anos de experiência no mercado, nos consolidamos como referência em operações de empréstimos consignados, sempre priorizando o atendimento humanizado e as melhores condições para nossos clientes.
@@ -192,7 +185,7 @@ export default function QuemSomos() {
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Por que escolher a Don Santos?
+              Por que escolher a DS PROMOTORA?
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Nossos diferenciais fazem toda a diferença na sua experiência
@@ -263,7 +256,7 @@ export default function QuemSomos() {
                 <div className="space-y-3 text-primary-foreground/80">
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-accent mt-0.5" />
-                    <span>Centro, Paulo Afonso - BA</span>
+                    <span>Av. Otaviano Leandro de Moraes, 31, Centro, Paulo Afonso - BA, CEP 48.602-005</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="w-5 h-5 text-accent" />
@@ -323,7 +316,7 @@ export default function QuemSomos() {
       <footer className="bg-primary text-primary-foreground py-8">
         <div className="container text-center">
           <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Don Santos Correspondente Bancário. Todos os direitos reservados.
+            © {new Date().getFullYear()} DS PROMOTORA Correspondente Bancário. Todos os direitos reservados.
           </p>
           <div className="flex justify-center gap-6 mt-4 text-sm">
             <Link href="/politica-privacidade" className="text-primary-foreground/60 hover:text-accent transition-colors">

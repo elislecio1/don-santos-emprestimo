@@ -361,7 +361,7 @@ export default function AdminConfiguracoes() {
                       placeholder="ID da pasta raiz para armazenar documentos"
                     />
                     <p className="text-xs text-muted-foreground">
-                      Se não informado, será criada uma pasta "Don Santos - Documentos" automaticamente.
+                      Se não informado, será criada uma pasta "DS PROMOTORA - Documentos" automaticamente.
                     </p>
                   </div>
                 </div>

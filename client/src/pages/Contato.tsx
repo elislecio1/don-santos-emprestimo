@@ -17,6 +17,7 @@ import {
   MessageCircle,
   Building2,
 } from "lucide-react";
+import { Brand } from "@/components/Brand";
 
 export default function Contato() {
   const [formData, setFormData] = useState({
@@ -49,15 +50,7 @@ export default function Contato() {
       <header className="bg-primary text-primary-foreground py-4 sticky top-0 z-50 shadow-lg">
         <div className="container">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center">
-                <span className="text-accent-foreground font-bold">DS</span>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg font-bold">Don Santos</h1>
-                <p className="text-xs text-primary-foreground/80">Correspondente Bancário</p>
-              </div>
-            </Link>
+            <Brand variant="light" />
             <div className="flex items-center gap-4">
               <a href="tel:08008802525" className="hidden md:flex items-center gap-2 hover:text-accent transition-colors">
                 <Phone className="w-5 h-5" />
@@ -134,8 +127,8 @@ export default function Contato() {
                   <Mail className="w-7 h-7 text-primary" />
                 </div>
                 <h3 className="font-semibold mb-2">E-mail</h3>
-                <a href="mailto:contato@donsantosba.com.br" className="text-accent hover:underline font-medium text-sm">
-                  contato@donsantosba.com.br
+                <a href="mailto:donsantosba@donsantosba.com.br" className="text-accent hover:underline font-medium text-sm">
+                  donsantosba@donsantosba.com.br
                 </a>
                 <p className="text-sm text-muted-foreground mt-1">Resposta em até 24h</p>
               </CardContent>
@@ -251,7 +244,7 @@ export default function Contato() {
                         <div className="space-y-2 text-sm">
                           <div className="flex items-start gap-2">
                             <MapPin className="w-4 h-4 text-accent mt-0.5" />
-                            <span>Centro, Paulo Afonso - BA, CEP 48607-000</span>
+                            <span>Av. Otaviano Leandro de Moraes, 31, Centro, Paulo Afonso - BA, CEP 48.602-005</span>
                           </div>
                           <div className="flex items-center gap-2">
                             <Phone className="w-4 h-4 text-accent" />
@@ -304,7 +297,7 @@ export default function Contato() {
       <footer className="bg-primary text-primary-foreground py-8">
         <div className="container text-center">
           <p className="text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Don Santos Correspondente Bancário. Todos os direitos reservados.
+            © {new Date().getFullYear()} DS PROMOTORA Correspondente Bancário. Todos os direitos reservados.
           </p>
           <div className="flex justify-center gap-6 mt-4 text-sm">
             <Link href="/politica-privacidade" className="text-primary-foreground/60 hover:text-accent transition-colors">
