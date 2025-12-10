@@ -80,3 +80,8 @@
 - [x] Usuário master: elislecio@gmail.com
 - [x] Página de login admin
 - [x] Proteção das rotas administrativas
+
+
+## Dados Iniciais
+- [x] Processar planilha de fatores INSS
+- [x] Cadastrar fatores no banco de dados (217 registros)
