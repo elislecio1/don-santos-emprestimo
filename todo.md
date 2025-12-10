@@ -91,3 +91,9 @@
 - [x] README.md completo para GitHub
 - [x] Script de inicialização PM2 (ecosystem.config.cjs)
 - [x] Comandos de deploy para aaPanel (DEPLOY_AAPANEL_COMANDOS.md)
+
+
+## Correções Deploy aaPanel
+- [ ] Garantir que ecosystem.config.cjs está no repositório
+- [ ] Garantir que scripts/seed-factors.mjs está no repositório
+- [ ] Atualizar instruções para Node.js 20+
