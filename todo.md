@@ -85,3 +85,9 @@
 ## Dados Iniciais
 - [x] Processar planilha de fatores INSS
 - [x] Cadastrar fatores no banco de dados (217 registros)
+
+
+## Documentação e Deploy
+- [x] README.md completo para GitHub
+- [x] Script de inicialização PM2 (ecosystem.config.cjs)
+- [x] Comandos de deploy para aaPanel (DEPLOY_AAPANEL_COMANDOS.md)
