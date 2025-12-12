@@ -26,7 +26,7 @@ export default function Simulador() {
   const [, setLocation] = useLocation();
   
   // Form state
-  const [tipoCalculo, setTipoCalculo] = useState<"parcela" | "emprestimo">("parcela");
+  const [tipoCalculo, setTipoCalculo] = useState<"parcela" | "emprestimo">("emprestimo");
   const [valor, setValor] = useState("");
   const [prazo, setPrazo] = useState("");
   const [dia] = useState(() => new Date().getDate()); // Current day of month
@@ -44,6 +44,14 @@ export default function Simulador() {
   
   // Fetch all factors for validation
   const { data: allFactors } = trpc.factors.getAll.useQuery();
+
+  // Selecionar automaticamente o prazo máximo quando os prazos forem carregados
+  useEffect(() => {
+    if (prazos && prazos.length > 0 && !prazo) {
+      const prazoMaximo = Math.max(...prazos);
+      setPrazo(prazoMaximo.toString());
+    }
+  }, [prazos, prazo]);
 
   // Check if factor exists for selected prazo and current day
   const factorExists = useMemo(() => {
@@ -217,7 +225,7 @@ export default function Simulador() {
                         className="flex flex-col items-center justify-center rounded-lg border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all"
                       >
                         <TrendingUp className="mb-2 h-6 w-6" />
-                        <span className="text-sm font-medium">Pelo Valor</span>
+                        <span className="text-sm font-medium">Pelo Valor liberado</span>
                         <span className="text-xs text-muted-foreground">Quanto vou pagar?</span>
                       </Label>
                     </div>
