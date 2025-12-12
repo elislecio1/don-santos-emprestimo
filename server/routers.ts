@@ -10,6 +10,7 @@ import {
   getAvailablePrazos,
   bulkInsertLoanFactors,
   deleteLoanFactor,
+  deleteManyLoanFactors,
   createProposal,
   getAllProposals,
   getProposalById,
@@ -231,6 +232,17 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         await deleteLoanFactor(input.id);
         return { success: true };
+      }),
+
+    // Admin: Delete multiple factors
+    deleteMany: adminProcedure
+      .input(z.object({ ids: z.array(z.number()) }))
+      .mutation(async ({ input }) => {
+        if (input.ids.length === 0) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Nenhum fator selecionado." });
+        }
+        const deleted = await deleteManyLoanFactors(input.ids);
+        return { success: true, deleted };
       }),
   }),
 

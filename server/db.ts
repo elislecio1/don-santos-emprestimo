@@ -1,4 +1,4 @@
-import { eq, and, desc, asc } from "drizzle-orm";
+import { eq, and, desc, asc, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, loanFactors, InsertLoanFactor, LoanFactor, proposals, InsertProposal, Proposal, settings, InsertSetting, adminUsers, AdminUser, InsertAdminUser } from "../drizzle/schema";
 import { createHash } from "crypto";
@@ -164,6 +164,16 @@ export async function deleteLoanFactor(id: number): Promise<void> {
   if (!db) throw new Error("Database not available");
   
   await db.delete(loanFactors).where(eq(loanFactors.id, id));
+}
+
+export async function deleteManyLoanFactors(ids: number[]): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  if (ids.length === 0) return 0;
+  
+  const result = await db.delete(loanFactors).where(inArray(loanFactors.id, ids));
+  return ids.length;
 }
 
 // ============ PROPOSALS FUNCTIONS ============

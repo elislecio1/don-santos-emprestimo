@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,12 +35,15 @@ import {
   Download,
   Info,
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function AdminFatores() {
   const [search, setSearch] = useState("");
   const [prazoFilter, setPrazoFilter] = useState<string>("all");
   const [isUploading, setIsUploading] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [deleteManyIds, setDeleteManyIds] = useState<number[] | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data: factors, isLoading, refetch } = trpc.factors.getAll.useQuery();
@@ -63,6 +66,17 @@ export default function AdminFatores() {
       toast.error("Erro ao excluir fator.");
     },
   });
+  const deleteManyFactors = trpc.factors.deleteMany.useMutation({
+    onSuccess: (data) => {
+      toast.success(`${data.deleted} fator(es) excluído(s) com sucesso!`);
+      refetch();
+      setSelectedIds(new Set());
+      setDeleteManyIds(null);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Erro ao excluir fatores.");
+    },
+  });
 
   // Get unique prazos for filter
   const uniquePrazos = factors
@@ -78,6 +92,33 @@ export default function AdminFatores() {
       f.fator.includes(search);
     return matchesPrazo && matchesSearch;
   });
+
+  // Selection handlers
+  const handleSelectAll = (checked: boolean) => {
+    if (checked && filteredFactors) {
+      setSelectedIds(new Set(filteredFactors.map((f) => f.id)));
+    } else {
+      setSelectedIds(new Set());
+    }
+  };
+
+  const handleSelectOne = (id: number, checked: boolean) => {
+    const newSelected = new Set(selectedIds);
+    if (checked) {
+      newSelected.add(id);
+    } else {
+      newSelected.delete(id);
+    }
+    setSelectedIds(newSelected);
+  };
+
+  const isAllSelected = filteredFactors && filteredFactors.length > 0 && filteredFactors.every((f) => selectedIds.has(f.id));
+  const isSomeSelected = selectedIds.size > 0;
+
+  // Limpar seleção quando filtros mudarem
+  useEffect(() => {
+    setSelectedIds(new Set());
+  }, [search, prazoFilter]);
 
   // Handle file upload
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -277,41 +318,71 @@ export default function AdminFatores() {
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
           ) : filteredFactors && filteredFactors.length > 0 ? (
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Prazo</TableHead>
-                    <TableHead>Dia</TableHead>
-                    <TableHead>Fator</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredFactors.map((factor) => (
-                    <TableRow key={factor.id}>
-                      <TableCell className="font-medium">#{factor.id}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{factor.prazo}x</Badge>
-                      </TableCell>
-                      <TableCell>Dia {factor.dia}</TableCell>
-                      <TableCell className="font-mono">{factor.fator}</TableCell>
-                      <TableCell className="text-right">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-destructive hover:text-destructive"
-                          onClick={() => setDeleteId(factor.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
+            <>
+              {/* Toolbar com botão de excluir selecionados */}
+              {isSomeSelected && (
+                <div className="p-4 border-b bg-muted/50 flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">
+                    {selectedIds.size} fator(es) selecionado(s)
+                  </span>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setDeleteManyIds(Array.from(selectedIds))}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Excluir Selecionados
+                  </Button>
+                </div>
+              )}
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-12">
+                        <Checkbox
+                          checked={isAllSelected}
+                          onCheckedChange={handleSelectAll}
+                        />
+                      </TableHead>
+                      <TableHead>ID</TableHead>
+                      <TableHead>Prazo</TableHead>
+                      <TableHead>Dia</TableHead>
+                      <TableHead>Fator</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredFactors.map((factor) => (
+                      <TableRow key={factor.id}>
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedIds.has(factor.id)}
+                            onCheckedChange={(checked) => handleSelectOne(factor.id, checked as boolean)}
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium">#{factor.id}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary">{factor.prazo}x</Badge>
+                        </TableCell>
+                        <TableCell>Dia {factor.dia}</TableCell>
+                        <TableCell className="font-mono">{factor.fator}</TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() => setDeleteId(factor.id)}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <FileSpreadsheet className="w-12 h-12 text-muted-foreground mb-4" />
@@ -342,6 +413,36 @@ export default function AdminFatores() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Many Confirmation Dialog */}
+      <AlertDialog open={!!deleteManyIds} onOpenChange={() => setDeleteManyIds(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Excluir Fatores Selecionados</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir {deleteManyIds?.length || 0} fator(es) selecionado(s)? 
+              Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => deleteManyIds && deleteManyFactors.mutate({ ids: deleteManyIds })}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deleteManyFactors.isPending}
+            >
+              {deleteManyFactors.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Excluindo...
+                </>
+              ) : (
+                `Excluir ${deleteManyIds?.length || 0} fator(es)`
+              )}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
