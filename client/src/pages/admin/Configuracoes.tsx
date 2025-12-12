@@ -283,16 +283,19 @@ export default function AdminConfiguracoes() {
                 <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-start gap-3">
                     <Info className="w-5 h-5 text-blue-600 mt-0.5" />
-                    <div className="text-sm">
-                      <p className="font-medium text-blue-900 mb-1">Como obter as credenciais:</p>
-                      <ol className="list-decimal list-inside text-blue-800 space-y-1">
-                        <li>Acesse o <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="underline">Google Cloud Console</a></li>
+                    <div className="text-sm flex-1">
+                      <p className="font-medium text-blue-900 mb-2">Como obter as credenciais:</p>
+                      <ol className="list-decimal list-inside text-blue-800 space-y-1 mb-3">
+                        <li>Acesse o <a href="https://console.cloud.google.com" target="_blank" rel="noopener noreferrer" className="underline font-medium">Google Cloud Console</a></li>
                         <li>Crie um novo projeto ou selecione um existente</li>
                         <li>Ative a Google Drive API</li>
                         <li>Crie credenciais OAuth 2.0</li>
                         <li>Configure a tela de consentimento</li>
-                        <li>Obtenha o Refresh Token usando o OAuth Playground</li>
+                        <li>Obtenha o Refresh Token usando o <a href="https://developers.google.com/oauthplayground" target="_blank" rel="noopener noreferrer" className="underline font-medium">OAuth Playground</a></li>
                       </ol>
+                      <p className="text-blue-800 mt-2">
+                        📖 <strong>Guia completo passo a passo:</strong> Consulte o arquivo <code className="bg-blue-100 px-1 rounded">GUIA_GOOGLE_DRIVE.md</code> no repositório do projeto para instruções detalhadas com imagens e troubleshooting.
+                      </p>
                     </div>
                   </div>
                 </div>
