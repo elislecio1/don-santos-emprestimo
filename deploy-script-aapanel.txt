@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Script de Deploy para aaPanel
+# Versão otimizada com verificações e melhorias
+
+set -e  # Parar em caso de erro (comentado para permitir tratamento manual)
+
 echo "=========================================="
 echo "🚀 Iniciando deploy - $(date)"
 echo "=========================================="
@@ -40,9 +45,21 @@ fi
 NODE_VERSION=$(node --version 2>/dev/null || echo "não encontrado")
 echo "📌 Node version: $NODE_VERSION"
 
+# Verificar se Node está disponível
+if ! command -v node &> /dev/null; then
+    echo "❌ Node.js não encontrado. Instale Node.js antes de continuar."
+    exit 1
+fi
+
 # Habilitar corepack e pnpm
 corepack enable 2>/dev/null || true
 corepack use pnpm@10 2>/dev/null || pnpm --version
+
+# Verificar se pnpm está disponível
+if ! command -v pnpm &> /dev/null; then
+    echo "❌ pnpm não encontrado. Instale pnpm antes de continuar."
+    exit 1
+fi
 
 # Pull do repositório
 echo "📥 Atualizando código do repositório..."
@@ -71,6 +88,21 @@ pnpm build || {
     exit 1
 }
 
+# Verificar se o build foi bem-sucedido
+if [ ! -f "dist/index.js" ]; then
+    echo "❌ Erro: dist/index.js não foi criado após o build"
+    exit 1
+fi
+
+# Verificar se PM2 está instalado
+if ! command -v pm2 &> /dev/null; then
+    echo "⚠️  PM2 não encontrado. Instalando PM2 globalmente..."
+    npm install -g pm2 || {
+        echo "❌ Erro ao instalar PM2"
+        exit 1
+    }
+fi
+
 # Reiniciar API com PM2
 echo "🔄 Reiniciando API..."
 pm2 stop don-api 2>/dev/null || true
@@ -86,14 +118,14 @@ if [ -z "$NODE_PATH" ] && command -v nvm &> /dev/null; then
 fi
 
 # Iniciar PM2
-if [ -n "$NODE_PATH" ] && [ "$NODE_PATH" != "node" ]; then
+echo "🚀 Iniciando aplicação com PM2..."
+if [ -n "$NODE_PATH" ] && [ "$NODE_PATH" != "node" ] && [ -f "$NODE_PATH" ]; then
     pm2 start "node dist/index.js" \
         --name don-api \
         --cwd /www/wwwroot/don.cim.br \
         --time \
         --interpreter "$NODE_PATH" || {
-        echo "❌ Erro ao iniciar PM2 com interpreter"
-        # Tentar sem interpreter
+        echo "⚠️  Erro ao iniciar PM2 com interpreter, tentando sem..."
         pm2 start "node dist/index.js" \
             --name don-api \
             --cwd /www/wwwroot/don.cim.br \
@@ -114,18 +146,53 @@ fi
 
 pm2 save
 
-# Aguardar alguns segundos
+# Aguardar alguns segundos para a aplicação iniciar
+echo "⏳ Aguardando aplicação iniciar..."
 sleep 5
 
-# Verificar status
-echo "✅ Verificando status..."
-pm2 list | grep don-api || echo "⚠️  Processo don-api não encontrado"
+# Verificar status do PM2
+echo "✅ Verificando status do PM2..."
+PM2_STATUS=$(pm2 list | grep don-api || echo "")
+if [ -z "$PM2_STATUS" ]; then
+    echo "⚠️  Processo don-api não encontrado no PM2"
+    echo "📋 Listando todos os processos PM2:"
+    pm2 list
+else
+    echo "✅ Processo encontrado:"
+    echo "$PM2_STATUS"
+fi
 
-# Testar API
+# Verificar logs recentes
+echo "📋 Últimas linhas dos logs:"
+pm2 logs don-api --lines 5 --nostream 2>/dev/null || echo "⚠️  Não foi possível ler os logs"
+
+# Testar API com timeout
 echo "🔍 Testando API..."
-curl -f http://127.0.0.1:3001/api/health 2>/dev/null && echo "✅ API respondendo" || echo "⚠️  API não respondeu ainda (pode levar alguns segundos)"
+API_RESPONSE=$(curl -f -s --max-time 10 http://127.0.0.1:3001/api/health 2>&1)
+if [ $? -eq 0 ]; then
+    echo "✅ API respondendo corretamente"
+    echo "   Resposta: $API_RESPONSE"
+else
+    echo "⚠️  API não respondeu ainda (pode levar alguns segundos)"
+    echo "   Erro: $API_RESPONSE"
+    echo "💡 Verifique os logs: pm2 logs don-api"
+fi
+
+# Verificar se a porta está em uso
+PORT_CHECK=$(netstat -tlnp 2>/dev/null | grep :3001 || ss -tlnp 2>/dev/null | grep :3001 || echo "")
+if [ -n "$PORT_CHECK" ]; then
+    echo "✅ Porta 3001 está em uso (aplicação provavelmente rodando)"
+else
+    echo "⚠️  Porta 3001 não está em uso"
+fi
 
 echo ""
 echo "=========================================="
 echo "✅ Deploy concluído - $(date)"
 echo "=========================================="
+echo ""
+echo "📝 Comandos úteis:"
+echo "   Ver logs: pm2 logs don-api"
+echo "   Ver status: pm2 status"
+echo "   Reiniciar: pm2 restart don-api"
+echo ""
