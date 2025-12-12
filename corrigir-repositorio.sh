@@ -25,13 +25,41 @@ else
     echo "✅ Repositório Git já existe"
 fi
 
-# Configurar remote
-echo "🔗 Configurando remote..."
-git remote set-url origin https://github.com/elislecio1/don-santos-emprestimo.git
-
-# Verificar remote
-echo "📋 Remotes configurados:"
+# Verificar remote atual
+echo "📋 Remote atual:"
 git remote -v
+
+# Verificar se está usando SSH ou HTTPS
+CURRENT_REMOTE=$(git remote get-url origin 2>/dev/null || echo "")
+
+if [[ "$CURRENT_REMOTE" == *"git@github.com"* ]]; then
+    echo "🔑 Repositório configurado com SSH"
+    echo "   Verificando chaves SSH..."
+    
+    # Verificar se há chave SSH
+    if [ -f ~/.ssh/id_rsa ] || [ -f ~/.ssh/id_ed25519 ]; then
+        echo "   ✅ Chave SSH encontrada"
+    else
+        echo "   ⚠️  Nenhuma chave SSH encontrada"
+        echo "   💡 Opções:"
+        echo "      1. Configurar chave SSH (recomendado para privado)"
+        echo "      2. Mudar para HTTPS (mais simples)"
+        read -p "   Deseja mudar para HTTPS? (s/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Ss]$ ]]; then
+            git remote set-url origin https://github.com/elislecio1/don-santos-emprestimo.git
+            echo "   ✅ Mudado para HTTPS"
+        fi
+    fi
+    
+    # Testar conexão SSH
+    echo "🔍 Testando conexão SSH..."
+    ssh -T git@github.com 2>&1 | head -3 || echo "   ⚠️  Erro na conexão SSH"
+else
+    echo "🌐 Repositório configurado com HTTPS"
+    # Se quiser mudar para SSH, descomente:
+    # git remote set-url origin git@github.com:elislecio1/don-santos-emprestimo.git
+fi
 
 # Configurar safe.directory
 echo "🔐 Configurando Git safe.directory..."
