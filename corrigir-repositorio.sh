@@ -69,6 +69,17 @@ git config --global --add safe.directory /www/wwwroot/don.cim.br
 echo "🔍 Testando conexão com o repositório..."
 git fetch origin main 2>&1 | head -5
 
+# Verificar se o fetch funcionou
+if [ $? -eq 0 ]; then
+    echo "   ✅ Conexão com repositório OK!"
+else
+    echo "   ⚠️  Erro ao fazer fetch"
+    echo "   💡 Verifique se:"
+    echo "      1. A chave SSH está configurada no GitHub"
+    echo "      2. O repositório existe e você tem acesso"
+    echo "      3. Execute: ssh -T git@github.com"
+fi
+
 # Verificar status
 echo ""
 echo "📊 Status do repositório:"

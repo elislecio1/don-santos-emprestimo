@@ -1,7 +1,7 @@
-# Guia: Configurar Repositório Git com SSH no aaPanel
+# Guia: Configurar Repositório Git SSH no aaPanel
 
 ## Repositório Configurado
-O repositório está configurado como: `git@github.com:elislecio1/don-santos-emprestimo.git` (SSH)
+✅ **Mantendo SSH**: `git@github.com:elislecio1/don-santos-emprestimo.git`
 
 ## Verificar se SSH está Funcionando
 
@@ -14,50 +14,64 @@ ssh -T git@github.com
 
 **Resposta esperada:**
 - ✅ `Hi elislecio1! You've successfully authenticated...` = SSH funcionando
-- ❌ `Permission denied` = SSH não configurado
+- ❌ `Permission denied (publickey)` = SSH não configurado
 
 ## Se SSH Não Estiver Configurado
 
-### Opção 1: Configurar Chave SSH (Recomendado para Repositórios Privados)
+### Passo 1: Gerar Chave SSH
 
 ```bash
 # Gerar chave SSH (se não tiver)
 ssh-keygen -t ed25519 -C "seu-email@exemplo.com" -f ~/.ssh/id_ed25519
 
+# Ou usar RSA (alternativa)
+ssh-keygen -t rsa -b 4096 -C "seu-email@exemplo.com" -f ~/.ssh/id_rsa
+
 # Exibir chave pública
 cat ~/.ssh/id_ed25519.pub
+# OU
+cat ~/.ssh/id_rsa.pub
+```
 
-# Copiar a chave e adicionar no GitHub:
-# 1. GitHub → Settings → SSH and GPG keys
-# 2. New SSH key
-# 3. Cole a chave pública
-# 4. Save
+### Passo 2: Adicionar Chave no GitHub
 
+1. Copie a chave pública exibida (começa com `ssh-ed25519` ou `ssh-rsa`)
+2. Acesse: https://github.com/settings/keys
+3. Clique em **New SSH key**
+4. Cole a chave pública
+5. Dê um título (ex: "Servidor aaPanel")
+6. Clique em **Add SSH key**
+
+### Passo 3: Testar Conexão
+
+```bash
 # Testar novamente
 ssh -T git@github.com
 ```
 
-### Opção 2: Mudar para HTTPS (Mais Simples)
+Deve aparecer: `Hi elislecio1! You've successfully authenticated...`
 
-Se preferir usar HTTPS (não requer chaves SSH):
+## Configurar Repositório no Servidor
+
+Execute o script atualizado:
 
 ```bash
 cd /www/wwwroot/don.cim.br
-git remote set-url origin https://github.com/elislecio1/don-santos-emprestimo.git
-git remote -v
+bash corrigir-repositorio.sh
 ```
 
-Depois, no aaPanel:
-1. Site → don.cim.br → Repositório
-2. Altere a URL para: `https://github.com/elislecio1/don-santos-emprestimo.git`
-3. Salve
+O script irá:
+- ✅ Verificar se o repositório está configurado com SSH
+- ✅ Garantir que o remote está correto
+- ✅ Verificar se há chaves SSH
+- ✅ Testar conexão com GitHub
+- ✅ Configurar safe.directory
 
 ## Configurar no aaPanel
 
 1. **Vá em Site → don.cim.br → Repositório**
 2. **Configure:**
-   - **URL**: `git@github.com:elislecio1/don-santos-emprestimo.git` (SSH)
-   - **OU**: `https://github.com/elislecio1/don-santos-emprestimo.git` (HTTPS)
+   - **URL**: `git@github.com:elislecio1/don-santos-emprestimo.git`
    - **Branch**: `main`
    - **Diretório**: `/www/wwwroot/don.cim.br`
 3. **Clique em "Atualizar"** para testar
@@ -69,29 +83,21 @@ Execute no terminal:
 ```bash
 cd /www/wwwroot/don.cim.br
 
-# Verificar remote
+# Verificar remote (deve ser SSH)
 git remote -v
 
-# Se estiver usando SSH, testar conexão
-ssh -T git@github.com
+# Se não for SSH, corrigir
+git remote set-url origin git@github.com:elislecio1/don-santos-emprestimo.git
 
 # Configurar safe.directory
 git config --global --add safe.directory /www/wwwroot/don.cim.br
 
+# Testar SSH
+ssh -T git@github.com
+
 # Testar pull
 git fetch origin main
 ```
-
-## Script Automático
-
-Execute o script atualizado:
-
-```bash
-cd /www/wwwroot/don.cim.br
-bash corrigir-repositorio.sh
-```
-
-O script agora detecta se está usando SSH ou HTTPS e oferece opções.
 
 ## Verificações Finais
 
@@ -99,18 +105,20 @@ O script agora detecta se está usando SSH ou HTTPS e oferece opções.
    ```bash
    ssh -T git@github.com
    ```
+   Deve retornar: `Hi elislecio1! You've successfully authenticated...`
 
 2. **Verificar Remote:**
    ```bash
    cd /www/wwwroot/don.cim.br
    git remote -v
    ```
+   Deve mostrar: `origin  git@github.com:elislecio1/don-santos-emprestimo.git (fetch)`
 
-3. **Testar Pull:**
+3. **Testar Fetch:**
    ```bash
    git fetch origin main
-   git status
    ```
+   Deve funcionar sem erros
 
 4. **No aaPanel:**
    - Site → don.cim.br → Repositório → Atualizar
@@ -132,8 +140,18 @@ O script agora detecta se está usando SSH ou HTTPS e oferece opções.
    ssh-keyscan github.com >> ~/.ssh/known_hosts
    ```
 
-3. **Ou mudar para HTTPS:**
-   ```bash
-   git remote set-url origin https://github.com/elislecio1/don-santos-emprestimo.git
-   ```
+3. **Verificar se a chave está no GitHub:**
+   - Acesse: https://github.com/settings/keys
+   - Verifique se a chave está listada
 
+4. **Testar com verbose:**
+   ```bash
+   ssh -vT git@github.com
+   ```
+   Isso mostra detalhes do processo de autenticação
+
+## Importante
+
+- ✅ **Mantemos SSH**: `git@github.com:elislecio1/don-santos-emprestimo.git`
+- ✅ O script garante que o remote está configurado corretamente
+- ✅ Verifica e testa a conexão SSH automaticamente
