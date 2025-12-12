@@ -61,11 +61,30 @@ if ! command -v pnpm &> /dev/null; then
     exit 1
 fi
 
+# Resolver conflitos antes do pull
+echo "🔧 Verificando conflitos do Git..."
+if [ -f deploy.sh ] && git diff deploy.sh &>/dev/null; then
+    echo "📦 Salvando alterações locais em deploy.sh..."
+    git stash push -m "Backup deploy.sh - $(date)" 2>/dev/null || true
+fi
+
+# Remover pnpm-lock.yaml local se existir (será regenerado)
+if [ -f pnpm-lock.yaml ] && ! git ls-files --error-unmatch pnpm-lock.yaml &>/dev/null; then
+    echo "🗑️  Removendo pnpm-lock.yaml local (será regenerado)..."
+    rm -f pnpm-lock.yaml
+fi
+
 # Pull do repositório
 echo "📥 Atualizando código do repositório..."
 git pull origin main || {
-    echo "❌ Erro ao fazer pull do repositório"
-    exit 1
+    echo "⚠️  Erro no pull. Tentando resolver conflitos..."
+    git stash push -m "Backup antes de pull - $(date)" 2>/dev/null || true
+    rm -f pnpm-lock.yaml ativar-ssl.sh configurar-ssl-nginx.sh corrigir-nginx-ssl.sh 2>/dev/null || true
+    git pull origin main || {
+        echo "❌ Erro ao fazer pull do repositório após resolver conflitos"
+        echo "💡 Execute manualmente: git reset --hard origin/main"
+        exit 1
+    }
 }
 
 # Instalar dependências
