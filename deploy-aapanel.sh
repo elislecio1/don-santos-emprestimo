@@ -10,15 +10,39 @@ cd /www/wwwroot/don.cim.br || {
     exit 1
 }
 
-# Ativar Node 20 e pnpm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-nvm use 20 || {
-    echo "⚠️  Node 20 não encontrado, usando versão padrão"
-}
+# Resolver problema de "dubious ownership" do Git
+echo "🔐 Configurando Git safe.directory..."
+git config --global --add safe.directory /www/wwwroot/don.cim.br || true
 
-corepack enable
-corepack use pnpm@10 || pnpm --version
+# Ativar Node 20 e pnpm
+# Tentar diferentes locais do nvm
+export NVM_DIR="$HOME/.nvm"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+    \. "$NVM_DIR/nvm.sh"
+elif [ -s "/root/.nvm/nvm.sh" ]; then
+    export NVM_DIR="/root/.nvm"
+    \. "$NVM_DIR/nvm.sh"
+elif [ -s "/usr/local/nvm/nvm.sh" ]; then
+    export NVM_DIR="/usr/local/nvm"
+    \. "$NVM_DIR/nvm.sh"
+fi
+
+# Tentar usar Node 20, mas continuar se não encontrar
+if command -v nvm &> /dev/null; then
+    nvm use 20 || {
+        echo "⚠️  Node 20 não encontrado, usando versão padrão"
+    }
+else
+    echo "⚠️  nvm não encontrado, usando Node do PATH"
+fi
+
+# Verificar versão do Node
+NODE_VERSION=$(node --version 2>/dev/null || echo "não encontrado")
+echo "📌 Node version: $NODE_VERSION"
+
+# Habilitar corepack e pnpm
+corepack enable 2>/dev/null || true
+corepack use pnpm@10 2>/dev/null || pnpm --version
 
 # Pull do repositório
 echo "📥 Atualizando código do repositório..."
@@ -52,16 +76,41 @@ echo "🔄 Reiniciando API..."
 pm2 stop don-api 2>/dev/null || true
 pm2 delete don-api 2>/dev/null || true
 
-# Usar Node 20 explicitamente
-export NODE_PATH=$(nvm which 20 | xargs dirname)
-pm2 start "node dist/index.js" \
-    --name don-api \
-    --cwd /www/wwwroot/don.cim.br \
-    --time \
-    --interpreter $NODE_PATH/node || {
-    echo "❌ Erro ao iniciar PM2"
-    exit 1
-}
+# Encontrar o caminho do Node
+NODE_PATH=$(which node 2>/dev/null)
+if [ -z "$NODE_PATH" ] && command -v nvm &> /dev/null; then
+    NODE_20_PATH=$(nvm which 20 2>/dev/null | xargs dirname)
+    if [ -n "$NODE_20_PATH" ] && [ -f "$NODE_20_PATH/node" ]; then
+        NODE_PATH="$NODE_20_PATH/node"
+    fi
+fi
+
+# Iniciar PM2
+if [ -n "$NODE_PATH" ] && [ "$NODE_PATH" != "node" ]; then
+    pm2 start "node dist/index.js" \
+        --name don-api \
+        --cwd /www/wwwroot/don.cim.br \
+        --time \
+        --interpreter "$NODE_PATH" || {
+        echo "❌ Erro ao iniciar PM2 com interpreter"
+        # Tentar sem interpreter
+        pm2 start "node dist/index.js" \
+            --name don-api \
+            --cwd /www/wwwroot/don.cim.br \
+            --time || {
+            echo "❌ Erro ao iniciar PM2"
+            exit 1
+        }
+    }
+else
+    pm2 start "node dist/index.js" \
+        --name don-api \
+        --cwd /www/wwwroot/don.cim.br \
+        --time || {
+        echo "❌ Erro ao iniciar PM2"
+        exit 1
+    }
+fi
 
 pm2 save
 
@@ -80,4 +129,3 @@ echo ""
 echo "=========================================="
 echo "✅ Deploy concluído - $(date)"
 echo "=========================================="
-
